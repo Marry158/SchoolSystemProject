@@ -5,6 +5,8 @@ import com.example.schoolproject.Repositories.SchoolUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class SchoolUserServiceImpl implements SchoolUserService {
 
@@ -24,5 +26,10 @@ public class SchoolUserServiceImpl implements SchoolUserService {
 
         schoolUserRepository.save(user);
         return user;
+    }
+
+    @Override
+    public Optional<SchoolUser> findUserById(Long id) {
+        return schoolUserRepository.findById(id);
     }
 }
