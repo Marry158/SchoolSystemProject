@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.naming.AuthenticationException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +54,18 @@ public class JWTUtil {
             request.setAttribute("invalid request", e.getMessage());
             throw e;
         }
+    }
+
+    public boolean validateClaims(Claims claims) throws AuthenticationException {
+        try {
+            return claims.getExpiration().after(new Date());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String getUserEmail(Claims claims) {
+        return claims.getSubject();
     }
 
     public String resolveToken(HttpServletRequest request) {

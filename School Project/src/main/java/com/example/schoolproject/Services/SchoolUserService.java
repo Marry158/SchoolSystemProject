@@ -9,4 +9,6 @@ public interface SchoolUserService {
     SchoolUser saveFirstUser(String email, String password);
 
     Optional<SchoolUser> findUserById(Long id);
+
+    Optional<SchoolUser> findUserByEmail(String email);
 }

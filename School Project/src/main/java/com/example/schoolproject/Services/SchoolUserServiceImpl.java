@@ -32,4 +32,9 @@ public class SchoolUserServiceImpl implements SchoolUserService {
     public Optional<SchoolUser> findUserById(Long id) {
         return schoolUserRepository.findById(id);
     }
+
+    @Override
+    public Optional<SchoolUser> findUserByEmail(String email) {
+        return schoolUserRepository.findByUserName(email);
+    }
 }
