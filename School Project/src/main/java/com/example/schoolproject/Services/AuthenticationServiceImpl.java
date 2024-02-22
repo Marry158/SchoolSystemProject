@@ -1,5 +1,7 @@
 package com.example.schoolproject.Services;
 
+import com.example.schoolproject.DTOs.JWTAuthResponse;
+import com.example.schoolproject.DTOs.SignInRequest;
 import com.example.schoolproject.DTOs.SignUpRequest;
 import com.example.schoolproject.Entities.SchoolUser;
 import com.example.schoolproject.Repositories.SchoolUserRepository;
@@ -29,5 +31,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(hashedPassword);
         schoolUserRepository.save(user);
 
+    }
+
+    @Override
+    public JWTAuthResponse signIn(SignInRequest signInRequest) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        var user = schoolUserRepository.findByUserName(signInRequest.getUserName());
+
+        if (!passwordUtil.validatePassword(signInRequest.getPassword(), user.get().getPassword())) {
+            throw new RuntimeException("Invalid password.");
+        }
+
+        String jwt = jwtUtil.createToken(user.get());
+        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        jwtAuthResponse.setToken(jwt);
+        return jwtAuthResponse;
     }
 }

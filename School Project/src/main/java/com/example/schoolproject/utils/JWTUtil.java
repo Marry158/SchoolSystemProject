@@ -5,12 +5,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.naming.AuthenticationException;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -21,20 +23,23 @@ public class JWTUtil {
 
     private final String TOKEN_HEADER = "Authorization";
     private final String TOKEN_PREFIX = "Bearer ";
+    //    @Value("${SECRET_KEY}")
+    private final String secret = "mySuperSecretKeyWithAtLeast32BytesLength";
     private long accessTokenValidity = 60 * 60 * 1000;
-    @Value("${SECRET_KEY")
-    private String secret;
-
     private JwtParser jwtParser;
 
     public String createToken(SchoolUser schoolUser) {
         Claims claims = Jwts.claims().setSubject(schoolUser.getUserName());
         Date tokenCreateTime = new Date();
+
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        Key key = Keys.hmacShaKeyFor(keyBytes);
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(tokenValidity)
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .setIssuedAt(tokenCreateTime)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
