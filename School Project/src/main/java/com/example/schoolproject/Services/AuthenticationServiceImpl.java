@@ -15,9 +15,9 @@ import java.security.spec.InvalidKeySpecException;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private JWTUtil jwtUtil;
-    private PasswordUtil passwordUtil;
-    private SchoolUserRepository schoolUserRepository;
+    private final JWTUtil jwtUtil;
+    private final PasswordUtil passwordUtil;
+    private final SchoolUserRepository schoolUserRepository;
 
 
     @Override
