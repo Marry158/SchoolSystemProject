@@ -6,6 +6,7 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,18 +16,16 @@ import java.util.concurrent.TimeUnit;
 
 
 @Component
+@RequiredArgsConstructor
 public class JWTUtil {
 
-    private final JwtParser jwtParser;
     private final String TOKEN_HEADER = "Authorization";
     private final String TOKEN_PREFIX = "Bearer ";
     private long accessTokenValidity = 60 * 60 * 1000;
     @Value("${SECRET_KEY")
     private String secret;
 
-    public JWTUtil() {
-        this.jwtParser = Jwts.parser().setSigningKey(secret);
-    }
+    private JwtParser jwtParser;
 
     public String createToken(SchoolUser schoolUser) {
         Claims claims = Jwts.claims().setSubject(schoolUser.getUserName());
@@ -75,5 +74,10 @@ public class JWTUtil {
             return bearerToken.substring(TOKEN_PREFIX.length());
         }
         return null;
+    }
+
+    @SuppressWarnings("deprecation")
+    public JwtParser jwtParser() {
+        return Jwts.parser().setSigningKey(secret);
     }
 }
