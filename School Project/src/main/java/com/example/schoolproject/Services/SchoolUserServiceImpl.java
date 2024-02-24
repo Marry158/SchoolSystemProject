@@ -1,9 +1,13 @@
 package com.example.schoolproject.Services;
 
+import com.example.schoolproject.Config.Impersonation;
 import com.example.schoolproject.Entities.SchoolUser;
 import com.example.schoolproject.Repositories.SchoolUserRepository;
 import com.example.schoolproject.utils.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -20,6 +24,16 @@ public class SchoolUserServiceImpl implements SchoolUserService {
     public SchoolUserServiceImpl(SchoolUserRepository schoolUserRepository, PasswordUtil passwordUtil) {
         this.schoolUserRepository = schoolUserRepository;
         this.passwordUtil = passwordUtil;
+    }
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+                return Impersonation.fromUser(schoolUserRepository.findByUserName(userName).get());
+            }
+        };
     }
 
     @Override
